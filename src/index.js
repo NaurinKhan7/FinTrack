@@ -158,7 +158,7 @@ app.use('/api/budgets', budgetRoutes);
 // MongoDB Connection with proper configuration
 const connectToDatabase = async () => {
   // Use default URI if .env is not configured
-  const dbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/finance-tracker';
+  const dbUri = process.env.MONGODB_URI;
   
   try {
     await mongoose.connect(dbUri, {
