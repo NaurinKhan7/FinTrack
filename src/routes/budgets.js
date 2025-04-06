@@ -9,7 +9,8 @@ const router = express.Router();
 // Helper function to calculate budget status
 async function calculateBudgetStatus(budget, transactions, totalIncome) {
   const categoryExpenses = transactions
-    .filter(t => t.type === 'expense' && t.category === budget.category)
+    .filter(t => t.type === 'expense' && 
+      t.category.toLowerCase() === budget.category.toLowerCase())
     .reduce((sum, t) => sum + t.amount, 0);
 
   const incomeContribution = budget.period === 'monthly' ? totalIncome : totalIncome / 12;
@@ -28,14 +29,14 @@ async function calculateBudgetStatus(budget, transactions, totalIncome) {
   };
 }
 
-// Get all budgets with status
+// Get all budgets with status (including auto-created ones)
 router.get('/', auth, async (req, res) => {
   try {
-    const budgets = await Budget.find({ user: req.user.userId });
+    let budgets = await Budget.find({ user: req.user.userId });
     
     // Get current period's transactions
     const startDate = new Date();
-    startDate.setDate(1); // First day of current month
+    startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
     
     const transactions = await Transaction.find({ 
@@ -43,24 +44,50 @@ router.get('/', auth, async (req, res) => {
       date: { $gte: startDate }
     });
 
+    // Get all unique expense categories from transactions
+    const expenseCategories = [...new Set(
+      transactions
+        .filter(t => t.type === 'expense')
+        .map(t => t.category.trim())
+    )];
+
+    // Ensure budgets exist for all expense categories
+    for (const category of expenseCategories) {
+      const exists = budgets.some(b => 
+        b.category.toLowerCase() === category.toLowerCase()
+      );
+      if (!exists) {
+        const newBudget = new Budget({
+          user: req.user.userId,
+          category,
+          amount: 0,
+          period: 'monthly'
+        });
+        await newBudget.save();
+        budgets = await Budget.find({ user: req.user.userId }); // Refresh budgets
+      }
+    }
+
     // Calculate total income
     const totalIncome = transactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
 
     // Enhance budgets with status
-    const budgetsWithStatus = await Promise.all(budgets.map(async (budget) => {
-      const status = await calculateBudgetStatus(budget, transactions, totalIncome);
-      return {
+    const budgetsWithStatus = await Promise.all(
+      budgets.map(async budget => ({
         ...budget.toObject(),
-        status
-      };
-    }));
+        status: await calculateBudgetStatus(budget, transactions, totalIncome)
+      }))
+    );
 
     res.json(budgetsWithStatus);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 });
 
@@ -68,8 +95,8 @@ router.get('/', auth, async (req, res) => {
 router.post('/',
   [
     auth,
-    body('category').notEmpty().withMessage('Category is required'),
-    body('amount').isNumeric().withMessage('Amount must be a number'),
+    body('category').notEmpty().trim().withMessage('Category is required'),
+    body('amount').isFloat({ gt: 0 }).withMessage('Amount must be a positive number'),
     body('period').isIn(['monthly', 'yearly']).withMessage('Period must be monthly or yearly')
   ],
   async (req, res) => {
@@ -81,6 +108,7 @@ router.post('/',
 
       const budget = new Budget({
         ...req.body,
+        category: req.body.category.trim(),
         user: req.user.userId
       });
 
@@ -88,7 +116,10 @@ router.post('/',
       res.status(201).json(budget);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Server error', error: error.message });
+      res.status(500).json({ 
+        message: 'Server error', 
+        error: error.message 
+      });
     }
   }
 );
@@ -112,7 +143,10 @@ router.put('/:id', auth, async (req, res) => {
     res.json(budget);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 });
 
@@ -136,7 +170,10 @@ router.delete('/:id', auth, async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 });
 
