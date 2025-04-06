@@ -1,2 +1,3 @@
 // API configuration
-export const API_URL = 'http://localhost:5000/api';
+ export const API_URL = 'https://fintrack-1-9yxr.onrender.com/api';
+

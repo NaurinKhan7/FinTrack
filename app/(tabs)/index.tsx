@@ -29,6 +29,8 @@ const CATEGORY_COLORS = {
   'Housing': '#34C759',
   'Utilities': '#5AC8FA',
   'Healthcare': '#FF2D55',
+  'Savings': '#f4d03f',       
+  'Income': '#c39bd3',        
   'Other': '#8E8E93'
 };
 
@@ -46,7 +48,6 @@ export default function DashboardScreen() {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('Authentication token not found');
 
-      // First, fetch ALL transactions for the pie chart and totals
       const allRes = await fetch(`${API_URL}/transactions`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -54,19 +55,16 @@ export default function DashboardScreen() {
       const allData = await allRes.json();
       setAllTransactions(allData);
 
-      // Then get just the 2 most recent transactions
       const sortedTransactions = [...allData]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 2);
       setRecentTransactions(sortedTransactions);
 
-      // Fetch budget data
       const budgetsRes = await fetch(`${API_URL}/budgets`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!budgetsRes.ok) throw new Error('Failed to fetch budgets');
 
-      // Calculate totals
       const budgets = await budgetsRes.json();
       const totalBudget = budgets.reduce((sum: number, budget: any) => sum + budget.amount, 0);
       const totalIncome = allData
@@ -104,11 +102,9 @@ export default function DashboardScreen() {
     );
   }
 
-  // Calculate remaining balance
   const remaining = budgetData ? Math.max(0, budgetData.totalBudget - budgetData.totalExpenses + budgetData.totalIncome) : 0;
   const totalSpent = budgetData?.totalExpenses || 0;
 
-  // Prepare category chart data from all expenses
   const categoryChartData = allTransactions
     .filter(t => t.type === 'expense')
     .reduce((acc, t) => {
@@ -135,9 +131,15 @@ export default function DashboardScreen() {
       contentContainerStyle={styles.content}
     >
       <View style={styles.header}>
-        <Text style={styles.greeting}>Welcome to FinTrack</Text>
-        <Text style={styles.balance}>${remaining.toFixed(2)}</Text>
-        <Text style={styles.balanceLabel}>Available Balance</Text>
+        <Text style={styles.greeting} numberOfLines={1} adjustsFontSizeToFit>
+          Welcome to FinTrack
+        </Text>
+        <Text style={styles.balance} numberOfLines={1} adjustsFontSizeToFit>
+          ${remaining.toFixed(2)}
+        </Text>
+        <Text style={styles.balanceLabel} numberOfLines={1} adjustsFontSizeToFit>
+          Available Balance
+        </Text>
       </View>
 
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -230,21 +232,28 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 24,
     alignItems: 'center',
+    paddingHorizontal: 16,
   },
   greeting: {
     fontSize: 18,
     color: '#8E8E93',
     marginBottom: 8,
+    maxWidth: '100%',
+    textAlign: 'center',
   },
   balance: {
     fontSize: 36,
     fontWeight: '700',
     color: '#000000',
     marginBottom: 4,
+    maxWidth: '100%',
+    textAlign: 'center',
   },
   balanceLabel: {
     fontSize: 16,
     color: '#8E8E93',
+    maxWidth: '100%',
+    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
