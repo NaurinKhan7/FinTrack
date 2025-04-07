@@ -29,6 +29,27 @@ A mobile-first personal finance tracking application built with React Native, Ex
      npm install
      ```
      #or
+     
      ```bash
      yarn install
      ```
+  3. Configure environment variables:
+     Create a .env file in the root directory
+
+     ```bash
+     API_URL=http://localhost:5000/api  # or your backend URL
+     ```
+
+  4. Start the development server:
+     
+     ```bash
+     npm start
+     ```
+
+     #or
+
+     ```bash
+     yarn start
+     ```
+
+     
