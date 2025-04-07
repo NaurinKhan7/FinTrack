@@ -69,7 +69,7 @@ This is the backend API for the FinTrack application. It provides endpoints for 
 #### Add Transaction
 - **POST** `/api/transactions`
 - Headers: `Authorization: Bearer <token>`
-- Body: `{ "type": "expense", "amount": 50, "category": "food", "description": "Lunch" }`
+- Body: `{ "type": "expense", "amount": 50, "category": "Food & Dining", "description": "Lunch" }`
 
 #### Update Transaction
 - **PUT** `/api/transactions/:id`
