@@ -27,6 +27,8 @@ A mobile-first personal finance tracking application built with React Native, Ex
   2. Install dependencies :
      ```bash
      npm install
+     ```
      #or
+     ```bash
      yarn install
      ```
