@@ -120,14 +120,6 @@ The API can be deployed to various platforms. Here are the steps for some common
    - Start Command: `npm start`
    - Environment Variables: Add all variables from `.env`
 
-### Railway
-
-1. Create a new project on Railway
-2. Connect your GitHub repository
-3. Add MongoDB add-on or configure external MongoDB URI
-4. Set environment variables in Railway dashboard
-5. Deploy
-
 ## Error Handling
 
 The API uses standard HTTP status codes:
