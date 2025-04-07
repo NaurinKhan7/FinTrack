@@ -1,6 +1,6 @@
-# Personal Finance Tracker Backend
+# FinTrack - Backend
 
-This is the backend API for the Personal Finance Tracker application. It provides endpoints for user management, transaction tracking, and budget monitoring.
+This is the backend API for the FinTrack application. It provides endpoints for user management, transaction tracking, and budget monitoring.
 
 ## Features
 
