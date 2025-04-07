@@ -21,6 +21,6 @@ A mobile-first personal finance tracking application built with React Native, Ex
   ##  Getting Started
 
   1. Clone the repository:
-    ``
-  https://github.com/NaurinKhan7/FinTrack.git 
+  
+  git clone https://github.com/NaurinKhan7/FinTrack.git 
   ``
