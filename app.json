@@ -24,6 +24,14 @@
     },
     "android": {
       "package": "com.naurin_29rach.exponativewind"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f0396824-64f7-453d-b031-b7f08b1218e1"
+      }
     }
   }
 }

@@ -1,3 +1,3 @@
-// API configuration
- export const API_URL = 'https://fintrack-1-9yxr.onrender.com/api';
+ // config/api.ts
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ;
 
