@@ -24,3 +24,9 @@ A mobile-first personal finance tracking application built with React Native, Ex
   ```bash
   git clone https://github.com/NaurinKhan7/FinTrack.git 
   ```
+  2. Install dependencies :
+     ```bash
+     npm install
+     #or
+     yarn install
+     ```
